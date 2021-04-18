@@ -14,8 +14,10 @@ BLANK_ERROR = "'{}' field cannot be blank."
 NAME_ALREADY_EXISTS = "An user with username '{}' already exists."
 ERROR_INSERTING = "An error occurred while inserting the user."
 USER_NOT_FOUND = "User not found."
+USER_CREATED = "User created successfully."
 USER_DELETED = "User deleted."
 INVALID_CREDENTIALS = "Invalid credentials!"
+USER_LOGGED_OUT = "User <id={}> successfully logged out."
 
 
 _user_parser = reqparse.RequestParser()
@@ -37,7 +39,7 @@ class UserRegister(Resource):
         user = UserModel(**data)
         user.save_to_db()
 
-        return {"message": "User created successfully."}, 201
+        return {"message": USER_CREATED}, 201
 
 
 class User(Resource):
@@ -79,7 +81,7 @@ class UserLogout(Resource):
         jti = get_jwt()["jti"]
         user_id = get_jwt_identity()
         BLOCKLST.add(jti)
-        return {"message": "User <id={}> successfully logged out.".format(user_id)}, 200
+        return {"message": USER_LOGGED_OUT.format(user_id)}, 200
 
 
 class TokenRefresh(Resource):
