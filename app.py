@@ -3,7 +3,7 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager
 
 from db import db
-from blocklist import blocklist
+from blocklist import BLOCKLST
 from resources.user import UserRegister, UserLogin, User, TokenRefresh, UserLogout
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
@@ -29,71 +29,12 @@ def create_tables():
 jwt = JWTManager(app)
 
 
-@jwt.additional_claims_loader
-def add_claims_to_jwt(identity):
-    if (identity <= 5):
-        return {"is_admin": True}
-    return {"is_admin": False}
-
 
 # This method will check if a token is blocklisted, and will be called automatically when blocklist is enabled
 @jwt.token_in_blocklist_loader
 def check_if_token_in_blocklist(jwt_headers , jwt_payload):
-    return jwt_payload["jti"] in blocklist
+    return jwt_payload["jti"] in BLOCKLST
 
-
-# The following callbacks are used for customizing jwt response/error messages.
-# The original ones may not be in a very pretty format (opinionated)
-@jwt.expired_token_loader
-def expired_token_callback(jwt_headers , jwt_payload):
-    return jsonify({
-        "message": "The token has expired.", 
-        "error": "token_expired"
-    }), 401
-
-
-@jwt.invalid_token_loader
-def invalid_token_callback(error):
-    return (
-        jsonify(
-            {"message": "Signature verification failed.", 
-            "error": "invalid_token"}
-        ),
-        401,
-    )
-
-
-@jwt.unauthorized_loader
-def missing_token_callback(error):
-    return (
-        jsonify(
-            {
-                "description": "Request does not contain an access token.",
-                "error": "authorization_required",
-            }
-        ),
-        401,
-    )
-
-
-@jwt.needs_fresh_token_loader
-def token_not_fresh_callback(jwt_headers , jwt_payload):
-    return (
-        jsonify(
-            {"description": "The token is not fresh.", "error": "fresh_token_required"}
-        ),
-        401,
-    )
-
-
-@jwt.revoked_token_loader
-def revoked_token_callback(jwt_headers , jwt_payload):
-    return (
-        jsonify(
-            {"description": "The token has been revoked.", "error": "token_revoked"}
-        ),
-        401,
-    )
 
 
 api.add_resource(Store, "/store/<string:name>")

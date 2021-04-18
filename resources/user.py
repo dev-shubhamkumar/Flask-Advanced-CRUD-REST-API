@@ -8,7 +8,7 @@ from flask_jwt_extended import (
     get_jwt,
 )
 from models.user import UserModel
-from blocklist import blocklist
+from blocklist import BLOCKLST
 
 _user_parser = reqparse.RequestParser()
 _user_parser.add_argument(
@@ -71,7 +71,7 @@ class UserLogout(Resource):
     def post(self):
         jti = get_jwt()["jti"]
         user_id = get_jwt_identity()
-        blocklist.add(jti)
+        BLOCKLST.add(jti)
         return {"message": "User <id={}> successfully logged out.".format(user_id)}, 200
 
 
