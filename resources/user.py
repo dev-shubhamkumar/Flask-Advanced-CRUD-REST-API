@@ -30,7 +30,8 @@ _user_parser.add_argument(
 
 
 class UserRegister(Resource):
-    def post(self):
+    @classmethod
+    def post(cls):
         data = _user_parser.parse_args()
 
         if UserModel.find_by_username(data["username"]):
@@ -60,7 +61,8 @@ class User(Resource):
 
 
 class UserLogin(Resource):
-    def post(self):
+    @classmethod
+    def post(cls):
         data = _user_parser.parse_args()
 
         user = UserModel.find_by_username(data["username"])
@@ -76,8 +78,9 @@ class UserLogin(Resource):
 
 
 class UserLogout(Resource):
+    @classmethod
     @jwt_required()
-    def post(self):
+    def post(cls):
         jti = get_jwt()["jti"]
         user_id = get_jwt_identity()
         BLOCKLST.add(jti)
@@ -85,8 +88,9 @@ class UserLogout(Resource):
 
 
 class TokenRefresh(Resource):
+    @classmethod
     @jwt_required(refresh=True)
-    def post(self):
+    def post(cls):
         current_user = get_jwt_identity()
         new_token = create_access_token(identity=current_user, fresh=False)
         return {"access_token": new_token}, 200
