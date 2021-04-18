@@ -17,7 +17,7 @@ app.config["JWT_blocklist_TOKEN_CHECKS"] = [
     "access",
     "refresh",
 ]
-app.secret_key = "jose"  # can also use app.config['JWT_SECRET_KEY']
+app.secret_key = "shubham"  # can also use app.config['JWT_SECRET_KEY']
 api = Api(app)
 
 
