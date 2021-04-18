@@ -10,12 +10,20 @@ from flask_jwt_extended import (
 from models.user import UserModel
 from blocklist import BLOCKLST
 
+BLANK_ERROR = "'{}' field cannot be blank."
+NAME_ALREADY_EXISTS = "An user with username '{}' already exists."
+ERROR_INSERTING = "An error occurred while inserting the user."
+USER_NOT_FOUND = "User not found."
+USER_DELETED = "User deleted."
+INVALID_CREDENTIALS = "Invalid credentials!"
+
+
 _user_parser = reqparse.RequestParser()
 _user_parser.add_argument(
-    "username", type=str, required=True, help="This field cannot be blank."
+    "username", type=str, required=True, help=BLANK_ERROR.format("username")
 )
 _user_parser.add_argument(
-    "password", type=str, required=True, help="This field cannot be blank."
+    "password", type=str, required=True, help=BLANK_ERROR.format("password")
 )
 
 
@@ -24,7 +32,7 @@ class UserRegister(Resource):
         data = _user_parser.parse_args()
 
         if UserModel.find_by_username(data["username"]):
-            return {"message": "A user with that username already exists."}, 400
+            return {"message": NAME_ALREADY_EXISTS.format("username")}, 400
 
         user = UserModel(**data)
         user.save_to_db()
@@ -37,16 +45,16 @@ class User(Resource):
     def get(cls, user_id: int):
         user = UserModel.find_by_id(user_id)
         if not user:
-            return {"message": "User not found."}, 404
+            return {"message": USER_NOT_FOUND}, 404
         return user.json(), 200
 
     @classmethod
     def delete(cls, user_id: int):
         user = UserModel.find_by_id(user_id)
         if not user:
-            return {"message": "User not found."}, 404
+            return {"message": USER_NOT_FOUND}, 404
         user.delete_from_db()
-        return {"message": "User deleted."}, 200
+        return {"message": USER_DELETED}, 200
 
 
 class UserLogin(Resource):
@@ -62,7 +70,7 @@ class UserLogin(Resource):
             refresh_token = create_refresh_token(user.id)
             return {"access_token": access_token, "refresh_token": refresh_token}, 200
 
-        return {"message": "Invalid credentials!"}, 401
+        return {"message": INVALID_CREDENTIALS}, 401
 
 
 class UserLogout(Resource):
