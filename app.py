@@ -16,7 +16,7 @@ app.config["JWT_blocklist_ENABLED"] = True  # enable blocklist feature
 app.config["JWT_blocklist_TOKEN_CHECKS"] = [
     "access",
     "refresh",
-]  
+]
 app.secret_key = "jose"  # can also use app.config['JWT_SECRET_KEY']
 api = Api(app)
 
@@ -29,12 +29,10 @@ def create_tables():
 jwt = JWTManager(app)
 
 
-
 # This method will check if a token is blocklisted, and will be called automatically when blocklist is enabled
 @jwt.token_in_blocklist_loader
-def check_if_token_in_blocklist(jwt_headers , jwt_payload):
+def check_if_token_in_blocklist(jwt_headers, jwt_payload):
     return jwt_payload["jti"] in BLOCKLST
-
 
 
 api.add_resource(Store, "/store/<string:name>")

@@ -33,7 +33,6 @@ class UserRegister(Resource):
 
 
 class User(Resource):
-
     @classmethod
     def get(cls, user_id: int):
         user = UserModel.find_by_id(user_id)

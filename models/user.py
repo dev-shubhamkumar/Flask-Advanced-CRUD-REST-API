@@ -5,6 +5,7 @@ from db import db
 
 UserJSON = Dict[str, Union[int, str]]
 
+
 class UserModel(db.Model):
     __tablename__ = "users"
 
@@ -17,10 +18,7 @@ class UserModel(db.Model):
         self.password = password
 
     def json(self) -> UserJSON:
-        return {
-            "id": self.id, 
-            "username": self.username
-        }
+        return {"id": self.id, "username": self.username}
 
     @classmethod
     def find_by_username(cls, username) -> "UserModel":
