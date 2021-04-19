@@ -2,11 +2,10 @@ from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 
+from ma import ma
 from db import db
 from blocklist import BLOCKLST
 from resources.user import UserRegister, UserLogin, User, TokenRefresh, UserLogout
-from resources.item import Item, ItemList
-from resources.store import Store, StoreList
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
@@ -35,10 +34,6 @@ def check_if_token_in_blocklist(jwt_headers, jwt_payload):
     return jwt_payload["jti"] in BLOCKLST
 
 
-api.add_resource(Store, "/store/<string:name>")
-api.add_resource(StoreList, "/stores")
-api.add_resource(Item, "/item/<string:name>")
-api.add_resource(ItemList, "/items")
 api.add_resource(UserRegister, "/register")
 api.add_resource(User, "/user/<int:user_id>")
 api.add_resource(UserLogin, "/login")
@@ -47,4 +42,5 @@ api.add_resource(UserLogout, "/logout")
 
 if __name__ == "__main__":
     db.init_app(app)
+    ma.init_app(app)
     app.run(port=5000, debug=True)
