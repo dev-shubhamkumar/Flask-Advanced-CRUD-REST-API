@@ -28,16 +28,13 @@ user_schema = UserSchema()
 class UserRegister(Resource):
     @classmethod
     def post(cls):
-        try:
-            user_json = request.get_json()
-            user = user_schema.load(user_json)
-        except ValidationError as err:
-            return err.message, 400
+        user_json = request.get_json()
+        user_data = user_schema.load(user_json)
 
-        if UserModel.find_by_username(user.username):
+        if UserModel.find_by_username(user_data.username):
             return {"message": NAME_ALREADY_EXISTS.format("username")}, 400
 
-        user.save_to_db()
+        user_data.save_to_db()
 
         return {"message": USER_CREATED}, 201
 
@@ -62,11 +59,8 @@ class User(Resource):
 class UserLogin(Resource):
     @classmethod
     def post(cls):
-        try:
-            user_json = request.get_json()
-            user_data = user_schema.load(user_json)
-        except ValidationError as err:
-            return err.message, 400
+        user_json = request.get_json()
+        user_data = user_schema.load(user_json)
 
         user = UserModel.find_by_username(user_data.username)
 
