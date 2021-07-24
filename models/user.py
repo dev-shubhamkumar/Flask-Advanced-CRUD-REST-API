@@ -1,12 +1,7 @@
-from requests import Response, post
+from requests import Response
 from flask import request, url_for
-
 from db import db
-
-MAILGUN_DOMAIN = "your_mailgun_domain"
-MAILGUN_API_KEY = "your_mailgun_api_key"
-FROM_TITLE = "Stores REST API"
-FROM_EMAIL = "your_mailgun_email"
+from libs.mailgun import Mailgun
 
 
 class UserModel(db.Model):
@@ -31,21 +26,12 @@ class UserModel(db.Model):
         return cls.query.filter_by(id=_id).first()
 
     def send_confirmation_email(self) -> Response:
-        # string[:-1] means copying from start (inclusive) to the last index (exclusive), a more detailed link below:
-        # from `http://127.0.0.1:5000/` to `http://127.0.0.1:5000`, since the url_for() would also contain a `/`
-        # https://stackoverflow.com/questions/509211/understanding-pythons-slice-notation
         link = request.url_root[:-1] + url_for("userconfirm", user_id=self.id)
+        subject = "Registration confirmation"
+        text = f"Please click the link to confirm your registration: {link}"
+        html = f'<htm>Please click the link to confirm your registration: <a href="{link}">{link}</a></htm>'
 
-        return post(
-            f"https://api.mailgun.net/v3/{MAILGUN_DOMAIN}/messages",
-            auth=("api", MAILGUN_API_KEY),
-            data={
-                "from": f"{FROM_TITLE} <{FROM_EMAIL}>",
-                "to": self.email,
-                "subject": "Registration confirmation",
-                "text": f"Please click the link to confirm your registration: {link}",
-            },
-        )
+        return Mailgun.send_email([self.email], subject, text, html)
 
     def save_to_db(self) -> None:
         db.session.add(self)
