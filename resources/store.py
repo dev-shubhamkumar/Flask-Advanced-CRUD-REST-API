@@ -3,7 +3,7 @@ from models.store import StoreModel
 from schemas.store import StoreSchema
 
 NAME_ALREADY_EXISTS = "A store with name '{}' already exists."
-ERROR_INSERTING = "An error occurred while creating the store."
+ERROR_INSERTING = "An error occurred while inserting the store."
 STORE_NOT_FOUND = "Store not found."
 STORE_DELETED = "Store deleted."
 
@@ -16,7 +16,8 @@ class Store(Resource):
     def get(cls, name: str):
         store = StoreModel.find_by_name(name)
         if store:
-            return store_schema.dump(store)
+            return store_schema.dump(store), 200
+
         return {"message": STORE_NOT_FOUND}, 404
 
     @classmethod
@@ -37,8 +38,9 @@ class Store(Resource):
         store = StoreModel.find_by_name(name)
         if store:
             store.delete_from_db()
+            return {"message": STORE_DELETED}, 200
 
-        return {"message": STORE_DELETED}
+        return {"message": STORE_NOT_FOUND}, 404
 
 
 class StoreList(Resource):
