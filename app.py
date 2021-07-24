@@ -7,7 +7,14 @@ from marshmallow import ValidationError
 from ma import ma
 from db import db
 from blocklist import BLOCKLIST
-from resources.user import UserRegister, UserLogin, User, TokenRefresh, UserLogout, UserConfirm
+from resources.user import (
+    UserRegister,
+    UserLogin,
+    User,
+    TokenRefresh,
+    UserLogout,
+    UserConfirm,
+)
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
 
@@ -20,7 +27,9 @@ app.config["JWT_blocklist_TOKEN_CHECKS"] = [
     "access",
     "refresh",
 ]
-app.secret_key = os.environ.get("APP_SECRET_KEY")  # can also use app.config['JWT_SECRET_KEY']
+app.secret_key = os.environ.get(
+    "APP_SECRET_KEY"
+)  # can also use app.config['JWT_SECRET_KEY']
 api = Api(app)
 
 
