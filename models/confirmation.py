@@ -19,6 +19,7 @@ class ConfirmationModel(db.Model):
         self.user_id = user_id
         self.id = uuid4().hex
         self.expire_at = int(time()) + CONFIRMATION_EXPIRATION_DELTA
+        self.confirmed = False
     
     @classmethod
     def find_by_id(cls, _id: str) -> "ConfirmationModel":

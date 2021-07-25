@@ -35,7 +35,7 @@ class UserModel(db.Model):
 
     def send_confirmation_email(self) -> Response:
         link = request.url_root[:-1] + url_for("confirmation", confirmation_id=self.most_recent_confirmation.id)
-        subject = "Registration confirmation"
+        subject = "Registration Confirmation"
         text = f"Please click the link to confirm your registration: {link}"
         html = f'<htm>Please click the link to confirm your registration: <a href="{link}">{link}</a></htm>'
 
