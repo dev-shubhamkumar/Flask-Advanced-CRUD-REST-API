@@ -15,7 +15,7 @@ class MailGunException(Exception):
 class Mailgun:
     MAILGUN_DOMAIN = os.environ.get("MAILGUN_DOMAIN")
     MAILGUN_API_KEY = os.environ.get("MAILGUN_API_KEY")
-    FROM_TITLE = os.environ.get("FROM_TITLE")
+    FROM_TITLE = "Stores REST API"
     FROM_EMAIL = os.environ.get("FROM_EMAIL")
 
     @classmethod
