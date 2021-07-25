@@ -12,7 +12,7 @@ class UserModel(db.Model):
     username = db.Column(db.String(80), nullable=False, unique=True)
     password = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(80), nullable=False, unique=True)
-    
+
     confirmation = db.relationship(
         "ConfirmationModel", lazy="dynamic", cascade="all, delete-orphan"
     )
@@ -34,7 +34,9 @@ class UserModel(db.Model):
         return cls.query.filter_by(id=_id).first()
 
     def send_confirmation_email(self) -> Response:
-        link = request.url_root[:-1] + url_for("confirmation", confirmation_id=self.most_recent_confirmation.id)
+        link = request.url_root[:-1] + url_for(
+            "confirmation", confirmation_id=self.most_recent_confirmation.id
+        )
         subject = "Registration Confirmation"
         text = f"Please click the link to confirm your registration: {link}"
         html = f'<htm>Please click the link to confirm your registration: <a href="{link}">{link}</a></htm>'
